@@ -112,13 +112,12 @@ def main():
         try:
             outfile = sys.argv[sys.argv.index('-o') + 1]
             out = os.path.realpath(outfile)
-        except ValueError:
+        except ValueError: # no -o specified
             outfile = None
             out = os.path.realpath(inputfile) + '.enc'
-            print('wat')
-            print('*** Error : Wrong output file, using default settings')
+            print('No output file, using default settings')
             pass
-        except IndexError:
+        except IndexError: # -o without filename, kickin' dat damn user!
             usage()
             sys.exit()
         print('Input file : {0}\r\nOutput file : {1}'.format(os.path.realpath(inputfile),out))
@@ -136,24 +135,32 @@ def main():
         try:
             outfile = sys.argv[sys.argv.index('-o') + 1]
             out = outfile
-        except ValueError:
+        except ValueError: # No -o specified
             outfile = None
             out = os.path.realpath(inputfile).split('.')[0]
+            print('No output file, using default settings')
             pass
-        except IndexError:
+        except IndexError: # -o without filename, kickin' dat damn user!
             usage()
             sys.exit()
-        if outfile == None:
-            print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),out))
-        else:
-            print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
 
+        if outfile == None: # disclosure so the user know what will happen
+            print('***********************************************************')
+            print('* Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),out))
+            print('***********************************************************')
+        else:
+            print('***********************************************************')
+            print('* Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
+            print('***********************************************************')
         key = getpass.getpass()
+
         try:
             decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
             print('Deciphered : {0}'.format(os.path.realpath(out)))
+
         except struct.error as e: # happen when decrypt function can't find a valid IV
             print('Wrong input file (unencrypted ?)')
+
         except FileNotFoundError:
             print('File {0} not found'.format(inputfile))
 main()
