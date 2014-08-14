@@ -7,7 +7,7 @@
 
 import os, random, struct, sys, hashlib, base64, getpass
 if sys.version_info <= (3, 0):
-    sys.stdout.write("Sorry, Python 3.x is requiered.\n")
+    sys.stdout.write("Sorry, Python 3.x is required.\n")
     sys.exit()
 
 try:
@@ -89,12 +89,12 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
 
 def usage():
     print('''
-          Usage : \r\n
-          \tcipherpony.py -e file [-o outfilename]\t encrypt a file\r\n
+          Usage :\r\n
+          \tcipherpony.py -e file [-o outfilename]\t crypt0l0v3 a file\r\n
           \t\tDefault filename will be input_file.enc\r\n
-          \tcipherpony.py -d file [-o outfilename]\t decrypt a file \r\n
+          \tcipherpony.py -d file [-o outfilename]\t decrypt0l0v3 a file\r\n
           \t\tDefault filename will be input_file without its last extension
-          (ex nsa.txt.enc will be nsa.txt)
+          (ex nsaleak.txt.enc will be nsaleak.txt)
           ''')
 
 if len(sys.argv) < 3:

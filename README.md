@@ -6,8 +6,11 @@ Python tool to encrypt/decrypt files with AES
 Setup
 =====
 With pip :
+
 ```pip install crypto```
+
 *nix:
+
 install the packet python3-crypto with your packet manager
 
 
