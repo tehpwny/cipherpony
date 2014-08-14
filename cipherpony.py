@@ -72,15 +72,16 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
                 if len(chunk) == 0:
                     break
                 outfile.write(decryptor.decrypt(chunk))
-
             outfile.truncate(origsize)
+
 def usage():
     print('''
           Usage : \r\n
           \tcipherpony.py -e file [-o outfilename]\t encrypt a file\r\n
           \t\tDefault filename will be input_file.enc\r\n
           \tcipherpony.py -d file [-o outfilename]\t decrypt a file \r\n
-          \t\tDefault filename will be input_file without its last extension (ex nsa.txt.enc will be nsa.txt)
+          \t\tDefault filename will be input_file without its last extension
+          (ex nsa.txt.enc will be nsa.txt)
           ''')
 
 if len(sys.argv) < 3:
@@ -88,7 +89,8 @@ if len(sys.argv) < 3:
     sys.exit()
 
 def main():
-    ''' Tool to encrypt/decrypt files with AES
+    '''
+        Tool to encrypt/decrypt files with AES
 
         Usage :
         cipherpony.py -e file [-o outfilename] :     encrypt a file
@@ -97,8 +99,9 @@ def main():
         cipherpony.py -d file [-o outfilename] :     decrypt a file
         Default filename will be input_file without its last extension (ex nsa.txt.enc will be nsa.txt)
     '''
+
     if os.path.isfile(sys.argv[2]) == False:
-        print('*** Error : Wrong input file')
+        print('*** Err0r!: Wrong input file')
         usage()
         sys.exit()
     try:
@@ -115,12 +118,14 @@ def main():
         except ValueError: # no -o specified
             outfile = None
             out = os.path.realpath(inputfile) + '.enc'
-            print('No output file, using default settings')
+            print('*** No output file, using default settingz')
             pass
         except IndexError: # -o without filename, kickin' dat damn user!
             usage()
             sys.exit()
-        print('Input file : {0}\r\nOutput file : {1}'.format(os.path.realpath(inputfile),out))
+        print('***********************************************************')
+        print('* Input file : {0}\r\n* Output file : {1}'.format(os.path.realpath(inputfile),out))
+        print('***********************************************************')
 
         key = getpass.getpass()
         encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
@@ -128,7 +133,7 @@ def main():
         rm = input('Remove original file ? (y/N)')
         if rm.lower() == 'y':
             os.remove(os.path.realpath(inputfile))
-        print('Ciphered : {0}'.format(os.path.realpath(out)))
+        print('C1ph3r3d : {0} !'.format(os.path.realpath(out)))
 
     elif sys.argv[1] == '-d': # decryption mode
         # handle arguments exeptions
@@ -138,29 +143,27 @@ def main():
         except ValueError: # No -o specified
             outfile = None
             out = os.path.realpath(inputfile).split('.')[0]
-            print('No output file, using default settings')
+            print('*** No output file, using default settingz')
             pass
         except IndexError: # -o without filename, kickin' dat damn user!
             usage()
             sys.exit()
 
         if outfile == None: # disclosure so the user know what will happen
-            print('***********************************************************')
-            print('* Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),out))
-            print('***********************************************************')
+            print('**********************************************************~')
+            print('| Input file : {0}\r\n| Output file: {1}'.format(os.path.realpath(inputfile),out))
+            print('**********************************************************~')
         else:
-            print('***********************************************************')
-            print('* Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
-            print('***********************************************************')
+            print('**********************************************************~')
+            print('| Input file : {0}\r\n| Output file: {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
+            print('**********************************************************~')
         key = getpass.getpass()
 
         try:
             decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
-            print('Deciphered : {0}'.format(os.path.realpath(out)))
+            print('D3c1ph3r3d : {0} !'.format(os.path.realpath(out)))
 
         except struct.error as e: # happen when decrypt function can't find a valid IV
-            print('Wrong input file (unencrypted ?)')
+            print('*** Err0r!: Wrong input file (unencrypted ?)')
 
-        except FileNotFoundError:
-            print('File {0} not found'.format(inputfile))
 main()
