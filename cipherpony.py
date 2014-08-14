@@ -3,13 +3,9 @@
 # adapted from Eli Bendersky
 # http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto/
 
-import os, random, struct, sys
-import hashlib
-import base64
-import getpass
+import os, random, struct, sys, hashlib, base64, getpass
 from Crypto.Cipher import AES
 from Crypto import Random
-
 
 def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
     """ Encrypts a file using AES (CBC mode) with the
@@ -81,13 +77,11 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
 
             outfile.truncate(origsize)
 
-
-
 if len(sys.argv) == 1:
     print('''
           Usage : \r\n
           \tcipherpony.py -e file [-o outfilename]\t encrypt a file\r\n
-          \t\tDefault filename will be input_file.enc
+          \t\tDefault filename will be input_file.enc\r\n
           \tcipherpony.py -d file [-o outfilename]\t decrypt a file \r\n
           \t\tDefault filename will be input_file without its last extension (ex nsa.txt.enc will be nsa.txt)''')
     sys.exit()
@@ -98,6 +92,7 @@ if sys.argv[1] == '-e':
     except ValueError:
         outfile = None
         pass
+    print('Input file : {0}\r\n Output file: {1}'.format(os.path.realpath(sys.argv[2]),os.path.realpath(outfile)))
     key = getpass.getpass()
     encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),sys.argv[2],outfile)
     rm = input('Remove original file ? (y/N)')
@@ -110,7 +105,10 @@ elif sys.argv[1] == '-d':
     except ValueError:
         outfile = None
         pass
-
+    if outfile == None:
+            print('Input file : {0}\r\nOutput file: {0}.enc'.format(os.path.realpath(sys.argv[2])))
+    else:
+        print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(sys.argv[2]),os.path.realpath(outfile)))
     key = getpass.getpass()
     try:
         decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),sys.argv[2],outfile)
