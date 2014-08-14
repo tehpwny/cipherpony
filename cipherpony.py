@@ -30,8 +30,6 @@ def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
     """
     if not out_filename:
         out_filename = in_filename + '.enc'
-
-    #iv = ''.join(chr(random.randint(0, 0xFF)) for i in range(16))
     iv = Random.get_random_bytes(16)
     encryptor = AES.new(key, AES.MODE_CBC, iv)
     try:
@@ -76,41 +74,69 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
                 outfile.write(decryptor.decrypt(chunk))
 
             outfile.truncate(origsize)
-
-if len(sys.argv) == 1:
+def usage():
     print('''
           Usage : \r\n
           \tcipherpony.py -e file [-o outfilename]\t encrypt a file\r\n
           \t\tDefault filename will be input_file.enc\r\n
           \tcipherpony.py -d file [-o outfilename]\t decrypt a file \r\n
-          \t\tDefault filename will be input_file without its last extension (ex nsa.txt.enc will be nsa.txt)''')
+          \t\tDefault filename will be input_file without its last extension (ex nsa.txt.enc will be nsa.txt)
+          ''')
+
+if len(sys.argv) < 3:
+    usage()
     sys.exit()
 
-if sys.argv[1] == '-e':
+def main():
+    if os.path.isfile(sys.argv[2]) == False:
+        print('*** Error : Wrong input file')
+        usage()
+        sys.exit()
     try:
-        outfile = sys.argv[sys.argv.index('-o') + 1]
-    except ValueError:
-        outfile = None
-        pass
-    print('Input file : {0}\r\n Output file: {1}'.format(os.path.realpath(sys.argv[2]),os.path.realpath(outfile)))
-    key = getpass.getpass()
-    encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),sys.argv[2],outfile)
-    rm = input('Remove original file ? (y/N)')
-    if rm.lower() == 'y':
-        os.remove(os.path.realpath(sys.argv[2]))
+        inputfile = sys.argv[2]
+    except IndexError:
+        usage()
+        sys.exit()
+    if sys.argv[1] == '-e':
+        try:
+            outfile = sys.argv[sys.argv.index('-o') + 1]
+            out = os.path.realpath(outfile)
+        except ValueError:
+            outfile = None
+            out = os.path.realpath(inputfile) + '.enc'
+            print('wat')
+            print('*** Error : Wrong output file, using default settings')
+            pass
+        except IndexError:
+            usage()
+            sys.exit()
 
-elif sys.argv[1] == '-d':
-    try:
-        outfile = sys.argv[sys.argv.index('-o') + 1]
-    except ValueError:
-        outfile = None
-        pass
-    if outfile == None:
-            print('Input file : {0}\r\nOutput file: {0}.enc'.format(os.path.realpath(sys.argv[2])))
-    else:
-        print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(sys.argv[2]),os.path.realpath(outfile)))
-    key = getpass.getpass()
-    try:
-        decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),sys.argv[2],outfile)
-    except struct.error as e:
-        print('Wrong input file')
+        print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),out))
+        key = getpass.getpass()
+        encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
+        rm = input('Remove original file ? (y/N)')
+        if rm.lower() == 'y':
+            os.remove(os.path.realpath(inputfile))
+    elif sys.argv[1] == '-d':
+        try:
+            outfile = sys.argv[sys.argv.index('-o') + 1]
+        except ValueError:
+            outfile = None
+            out = os.path.realpath(inputfile).split('.')[0]
+            pass
+        except IndexError:
+            usage()
+            sys.exit()
+
+        if outfile == None:
+                print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),out))
+        else:
+            print('Input file : {0}\r\nOutput file: {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
+        key = getpass.getpass()
+        try:
+            decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
+        except struct.error as e:
+            print('Wrong input file (unencrypted ?)')
+        except FileNotFoundError:
+            print('File {0} not found'.format(inputfile))
+main()
