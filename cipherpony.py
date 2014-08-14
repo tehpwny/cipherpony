@@ -6,6 +6,10 @@
 #
 
 import os, random, struct, sys, hashlib, base64, getpass
+if sys.version_info <= (3, 0):
+    sys.stdout.write("Sorry, Python 3.x is requiered.\n")
+    sys.exit()
+
 try:
     from Crypto.Cipher import AES
     from Crypto import Random
