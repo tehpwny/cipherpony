@@ -3,7 +3,8 @@ cipherpony
 
 Python tool to encrypt/decrypt files with AES
 
-Usage :
+Usage
+=====
 encrypt a file:
 ```
  cipherpony.py -e file [-o outfilename]  
