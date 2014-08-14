@@ -1,11 +1,19 @@
-#!/bin/python
-
+#!/usr/bin/python3.4
+#
+# pwny@lebib.org
 # adapted from Eli Bendersky
 # http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto/
+#
 
 import os, random, struct, sys, hashlib, base64, getpass
-from Crypto.Cipher import AES
-from Crypto import Random
+try:
+    from Crypto.Cipher import AES
+    from Crypto import Random
+except ImportError:
+    print('''No crypto module, please install it. ex:\r\n
+    \tpip install crypto\r\n
+    or install python3-crypto with your packet manager''')
+    sys.exit()
 
 def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
     """ Encrypts a file using AES (CBC mode) with the
@@ -58,6 +66,7 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
         (i.e. if in_filename is 'aaa.zip.enc' then
         out_filename will be 'aaa.zip')
     """
+
     if not out_filename:
         out_filename = os.path.splitext(in_filename)[0]
 
@@ -123,9 +132,9 @@ def main():
         except IndexError: # -o without filename, kickin' dat damn user!
             usage()
             sys.exit()
-        print('***********************************************************')
-        print('* Input file : {0}\r\n* Output file : {1}'.format(os.path.realpath(inputfile),out))
-        print('***********************************************************')
+        print('**********************************************************~')
+        print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(inputfile),out))
+        print('**********************************************************~')
 
         key = getpass.getpass()
         encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
@@ -151,11 +160,11 @@ def main():
 
         if outfile == None: # disclosure so the user know what will happen
             print('**********************************************************~')
-            print('| Input file : {0}\r\n| Output file: {1}'.format(os.path.realpath(inputfile),out))
+            print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(inputfile),out))
             print('**********************************************************~')
         else:
             print('**********************************************************~')
-            print('| Input file : {0}\r\n| Output file: {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
+            print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(inputfile),os.path.realpath(outfile)))
             print('**********************************************************~')
         key = getpass.getpass()
 
