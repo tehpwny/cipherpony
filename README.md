@@ -7,7 +7,7 @@ Setup
 =====
 With pip :
 
-```pip install crypto```
+```sudo pip install crypto```
 
 *nix:
 

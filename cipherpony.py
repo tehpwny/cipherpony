@@ -1,11 +1,11 @@
 #!/usr/bin/python3.4
-#
-# pwny@lebib.org
+# -*- coding: utf-8 -*-
+# Author: pwny@lebib.org
 # adapted from Eli Bendersky
 # http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto/
 #
 
-import os, random, struct, sys, hashlib, base64, getpass
+import os, random, math, struct, sys, hashlib, base64, getpass
 if sys.version_info <= (3, 0):
     sys.stdout.write("Sorry, Python 3.x is required.\n")
     sys.exit()
@@ -18,6 +18,62 @@ except ImportError:
     \tpip install crypto\r\n
     or install python3-crypto with your packet manager''')
     sys.exit()
+
+
+def xkcd_entropy_range(entropy):
+    xkcd_point = 84.0964047443681 # correcthorsebatterystaple
+    return float(entropy) / xkcd_point
+
+def get_entropy(passphrase):
+    if len(passphrase) == 0:
+        return 0
+
+    if passphrase == None:
+        return 0
+    entropy = float()
+    keylen = float(len(passphrase))
+    for char in range(256):
+        count = float(passphrase.count(chr(char))/keylen)
+        if count > 0:
+            entropy += - count*math.log(count, 2)
+    return entropy*keylen
+
+def entropy_warning(entropy):
+    print('''
+        ~**********************************************************************
+                                  HELLO !
+                 /\/\\
+                /    \   I'm Security Pwny and you see me because your
+              ~/(^  ^)   passphrase security is realy bad !
+             ~/  )  (
+            ~/   (  )    Here's some reading about passwod entropy:
+           ~/     ~~                 http://xkcd.com/936/
+          ~/       |
+                                 Here's your score : {0:.2f}%
+            (100% being the reference entropy of : correcthorsebatterystaple)
+
+         The strengh of a chain is equal to it weakest link, if your passphrase
+         is too short or based on one or few words someone (let's say the NSA)
+         could easely manage a brute-force attack on your secrets.
+
+         Now that you know that,
+
+         DO YOU WISH TO ABORT AND CHOOSE A BETTER PASSPHRASE ?
+         (please do it for all the crypto kittens.)
+    '''.format(entropy))
+    return input('Cancel and save crypto kittens ? (Y/nope)')
+
+def wrapgetpass():
+    try:
+        key = getpass.getpass()
+        if len(key) == 0:
+            print('Empty passphrase, srsly ?')
+            sys.exit()
+        return key
+    except UnicodeDecodeError:
+        print('*** Err0r!: Sorry, cipher pony doesn\'t support unicode chars in passphrase :(')
+        wrapgetpass()
+
 
 def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
     """ Encrypts a file using AES (CBC mode) with the
@@ -47,7 +103,7 @@ def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
     try:
         filesize = os.path.getsize(in_filename)
     except FileNotFoundError:
-        print('File {0} not found'.format(in_filename))
+        print('*** Err0r!: File {0} not found'.format(in_filename))
         sys.exit()
     with open(in_filename, 'rb') as infile:
         with open(out_filename, 'wb') as outfile:
@@ -63,7 +119,8 @@ def encrypt_file(key, in_filename, out_filename=None, chunksize=64*1024):
                 outfile.write(encryptor.encrypt(chunk))
 
 def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
-    """ Decrypts a file using AES (CBC mode) with the
+    """
+        Decrypts a file using AES (CBC mode) with the
         given key. Parameters are similar to encrypt_file,
         with one difference: out_filename, if not supplied
         will be in_filename without its last extension
@@ -140,7 +197,17 @@ def main():
         print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(inputfile),out))
         print('**********************************************************~')
 
-        key = getpass.getpass()
+        key = wrapgetpass()
+        entropy = get_entropy(key)
+
+        if xkcd_entropy_range(entropy) < 0.6:
+            w = entropy_warning(xkcd_entropy_range(entropy)*100)
+            print(w.lower())
+            if w.lower() == 'nope' or w.lower() == 'n' or w.lower() == 'no':
+                print(':(')
+            else:
+                sys.exit()
+        print('Passphrase entropy score: {0}'.format(xkcd_entropy_range(entropy)*100))
         encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
 
         rm = input('Remove original file ? (y/N)')
