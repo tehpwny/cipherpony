@@ -21,10 +21,14 @@ except ImportError:
 
 
 def xkcd_entropy_range(entropy):
+    ''' Compare entropy (in bits) to xkcd's reference of a good passphrase '''
     xkcd_point = 84.0964047443681 # correcthorsebatterystaple
     return float(entropy) / xkcd_point
 
 def get_entropy(passphrase):
+    '''
+        Return the entropy (in bits) of passphrase
+    '''
     if len(passphrase) == 0:
         return 0
 
@@ -38,32 +42,48 @@ def get_entropy(passphrase):
             entropy += - count*math.log(count, 2)
     return entropy*keylen
 
-def entropy_warning(entropy):
+def entropy_warning(xkcdentropy):
+    '''
+        Displays a friendly message about security & datalove
+    '''
     print('''
-        ~**********************************************************************
-                                  HELLO !
+      ~*************************************************************************~
+                                  Ohai !
                  /\/\\
                 /    \   I'm Security Pwny and you see me because your
-              ~/(^  ^)   passphrase security is realy bad !
+              ~/(^  ^)   passphrase security is L4M3 !
              ~/  )  (
             ~/   (  )    Here's some reading about passwod entropy:
            ~/     ~~                 http://xkcd.com/936/
-          ~/       |
+          ~/ 1337  |
                                  Here's your score : {0:.2f}%
-            (100% being the reference entropy of : correcthorsebatterystaple)
+            (100% being the reference entropy of : 'correcthorsebatterystaple')
+                (I stop being annoying if you reach 60% score, promise!)
 
          The strengh of a chain is equal to it weakest link, if your passphrase
          is too short or based on one or few words someone (let's say the NSA)
          could easely manage a brute-force attack on your secrets.
 
+         AES-256 may feel like one hell of a crypto-thingy but if the pass that
+         protect your (or someone's else!) secrets is 'monkey1234' you can just
+         get rid of thoses complicated softwares and use pencil and post-it's
+         then leave it on your desk, at least no one is really sure if NSA can
+         look there (well, I hope).
+
          Now that you know that,
 
          DO YOU WISH TO ABORT AND CHOOSE A BETTER PASSPHRASE ?
          (please do it for all the crypto kittens.)
-    '''.format(entropy))
+
+      ~*************************************************************************~
+    '''.format(xkcdentropy))
     return input('Cancel and save crypto kittens ? (Y/nope)')
 
 def wrapgetpass():
+    '''
+        Wraps python's getpass() to handle the lack
+        of unicode support by this function
+    '''
     try:
         key = getpass.getpass()
         if len(key) == 0:
@@ -198,8 +218,8 @@ def main():
         print('**********************************************************~')
 
         key = wrapgetpass()
+        # Guess if the passphrase is good enough
         entropy = get_entropy(key)
-
         if xkcd_entropy_range(entropy) < 0.6:
             w = entropy_warning(xkcd_entropy_range(entropy)*100)
             print(w.lower())
