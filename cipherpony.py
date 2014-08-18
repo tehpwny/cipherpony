@@ -5,6 +5,28 @@
 # http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto/
 #
 
+
+#################################################
+# DISCL4M3R
+# THIS SOFTWARE IS MAGICAL VOODOO CRYPTOGRAPHY
+#
+# YOU SHOULD NOTE THAT IT IS ONLY EXPERIMENTAL
+# AND YOU SHOULD NOT USE IT EXCEPT FOR VOODOO
+# RECIPES MAYBE.
+#
+# DO NOT USE IT ON SERIOUS INFORMATIONS, IF
+# YOU ARE A REAL TERRORIST THEN YOU SHOULD
+# LEARN TO USE PGP WHICH IS MORE SERIOUS
+# CRYPTO-VOODOO
+#
+# Ah, also, AND OF COURSE I'M NOT RESPONSIBLE FOR
+# ANY DATA LOSS, PROSECUSION, JAIL TIME, DEATH
+# SENTENCES, EXPLOSIONS OR ANYTHING CIPHERPONY
+# WOULD DO.
+#################################################
+
+
+
 import os, random, math, struct, sys, hashlib, base64, getpass
 if sys.version_info <= (3, 0):
     sys.stdout.write("Sorry, Python 3.x is required.\n")
@@ -228,6 +250,8 @@ def main():
             else:
                 sys.exit()
         print('Passphrase entropy score: {0}'.format(xkcd_entropy_range(entropy)*100))
+
+
         encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
 
         rm = input('Remove original file ? (y/N)')
@@ -260,6 +284,7 @@ def main():
         key = getpass.getpass()
 
         try:
+
             decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),inputfile,outfile)
             print('D3c1ph3r3d : {0} !'.format(os.path.realpath(out)))
 
