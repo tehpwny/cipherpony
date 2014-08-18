@@ -14,7 +14,8 @@ daily princess diary or your cat pictures folder.
 
 It is still in developpement so changes will happen
 like the cipher mode and the hashing method to
-become more secure.
+become more secure. (old schemes will be supported
+optionaly)
 
 DISCL4M3R
 =========
