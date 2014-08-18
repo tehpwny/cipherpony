@@ -3,6 +3,19 @@ cipherpony
 
 Python tool to encrypt/decrypt files with AES
 
+The intended duty of this software is to provide a
+simple way to encrypt a file without a 'down side'
+of GPG (what you should use for that):
+* Absolutely user hostile (until they cryptoparty!)
+
+It is not intended to replace GPG, it is a quick
+anonymous file encryption tool, like for your
+daily princess diary or your cat pictures folder.
+
+It is still in developpement so changes will happen
+like the cipher mode and the hashing method to
+become more secure.
+
 DISCL4M3R
 =========
 ```
@@ -23,6 +36,7 @@ DISCL4M3R
  ANY DATA LOSS, PROSECUSION, JAIL TIME, DEATH
  SENTENCES, EXPLOSIONS OR ANYTHING CIPHERPONY
  WOULD DO.
+
 #################################################
 ```
 

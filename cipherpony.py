@@ -1,13 +1,26 @@
 #!/usr/bin/python3.4
 # -*- coding: utf-8 -*-
+#
 # Author: pwny@lebib.org
-# adapted from Eli Bendersky
+# some code from Eli Bendersky
 # http://eli.thegreenplace.net/2010/06/25/aes-encryption-of-files-in-python-with-pycrypto/
 #
-
-
+# The intended duty of this software is to provide a
+# simple way to encrypt a file without a 'down side'
+# of GPG (what you should use for that):
+# * Absolutely user hostile (until they cryptoparty!)
+#
+# It is not intended to replace GPG, it is a quick
+# anonymous file encryption tool, like for your
+# daily princess diary or your cat pictures folder.
+#
+# It is still in developpement so changes will happen
+# like the cipher mode and the hashing method to
+# become more secure.
+#
 #################################################
-# DISCL4M3R
+# DISCL4M3R:
+#
 # THIS SOFTWARE IS MAGICAL VOODOO CRYPTOGRAPHY
 #
 # YOU SHOULD NOTE THAT IT IS ONLY EXPERIMENTAL
@@ -23,6 +36,7 @@
 # ANY DATA LOSS, PROSECUSION, JAIL TIME, DEATH
 # SENTENCES, EXPLOSIONS OR ANYTHING CIPHERPONY
 # WOULD DO.
+#
 #################################################
 
 
@@ -87,7 +101,7 @@ def entropy_warning(xkcdentropy):
          could easely manage a brute-force attack on your secrets.
 
          AES-256 may feel like one hell of a crypto-thingy but if the pass that
-         protect your (or someone's else!) secrets is 'monkey1234' you can just
+         protect your (or someone else's!) secrets is 'monkey1234' you can just
          get rid of thoses complicated softwares and use pencil and post-it's
          then leave it on your desk, at least no one is really sure if NSA can
          look there (well, I hope).
