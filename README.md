@@ -1,7 +1,7 @@
 cipherpony
 ==========
 
-Python tool to encrypt/decrypt files with AES
+Old fashioned 1337 tool to encrypt/decrypt files with AES
 
 The intended duty of this software is to provide a
 simple way to encrypt a file without a 'down side'
@@ -54,13 +54,13 @@ install the packet python3-crypto with your packet manager
 
 Usage
 =====
-crypt0l0v3 a file:
+c1ph3rl0v3 a file:
 ```
  cipherpony.py -e file [-o outfilename]  
 ```
   Default filename will be input_file.enc
 
-decrypt0l0v3 a file:
+dec1ph3rl0v3 a file:
 ```
  cipherpony.py -d file [-o outfilename]
  ```

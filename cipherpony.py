@@ -84,7 +84,7 @@ def entropy_warning(xkcdentropy):
     '''
     print('''
       ~*************************************************************************~
-                                  Ohai !
+                                  Ohai !1
                  /\/\\
                 /    \   I'm Security Pwny and you see me because your
               ~/(^  ^)   passphrase security is L4M3 !
@@ -109,7 +109,7 @@ def entropy_warning(xkcdentropy):
          Now that you know that,
 
          DO YOU WISH TO ABORT AND CHOOSE A BETTER PASSPHRASE ?
-         (please do it for all the crypto kittens.)
+         (please do it for all the cryptokittens.)
 
       ~*************************************************************************~
     '''.format(xkcdentropy))
@@ -127,7 +127,8 @@ def wrapgetpass():
             sys.exit()
         return key
     except UnicodeDecodeError:
-        print('*** Err0r!: Sorry, cipher pony doesn\'t support unicode chars in passphrase :(')
+        print('*** Err0r!: Sorry, cipherpony doesn\'t support unicode chars in passphrase :(')
+        # TODO(?) wrap python script un a shell then -p $passphrase ?
         wrapgetpass()
 
 
@@ -203,47 +204,52 @@ def decrypt_file(key, in_filename, out_filename=None, chunksize=24*1024):
 def usage():
     print('''
           Usage :\r\n
-          \tcipherpony.py -e file [-o outfilename]\t crypt0l0v3 a file\r\n
+          \tcipherpony.py -e file [-o outfilename]\t c1ph3rl0v3 a file\r\n
           \t\tDefault filename will be input_file.enc\r\n
-          \tcipherpony.py -d file [-o outfilename]\t decrypt0l0v3 a file\r\n
+          \tcipherpony.py -d file [-o outfilename]\t d3c1ph3rl0v3 a file\r\n
           \t\tDefault filename will be input_file without its last extension
           (ex nsaleak.txt.enc will be nsaleak.txt)
           ''')
 
-if len(sys.argv) < 3:
-    usage()
-    sys.exit()
-
 def main():
     '''
-        Tool to encrypt/decrypt files with AES
+        Old fashioned 1337 tool to encrypt/decrypt files with AES
 
         Usage :
-        cipherpony.py -e file [-o outfilename] :     encrypt a file
-        Default filename will be input_file.enc
+        cipherpony.py -e file [-o outfilename] :     c1ph3r a file
+        Default filename will be input_file.c1ph3r3d
 
-        cipherpony.py -d file [-o outfilename] :     decrypt a file
+        cipherpony.py -d file [-o outfilename] :     d3c1ph3r a file
         Default filename will be input_file without its last extension (ex nsa.txt.enc will be nsa.txt)
     '''
     parser = argparse.ArgumentParser(
-        description="Tool to encrypt/decrypt files with AES")
+        description="Old fashioned 1337 tool to encrypt/decrypt files with AES")
     parser.add_argument("-e", '--encrypt')
     parser.add_argument("-d", "--decrypt")
     parser.add_argument("-o", "--output-file")
-    args = parser.parse_args()
+    argz = parser.parse_args()
 
-    if args.encrypt is not None: # encrypt mode
-        if os.path.isfile(args.encrypt) == False:
+    if argz.encrypt is not None and argz.decrypt is not None:
+        # both -e and -d used
+        usage()
+        sys.exit()
+    if argz.encrypt is None and argz.decrypt is None and argz.output_file is not None:
+        # nothing happen when ./cipherpony -o fo0 but blaming the user tho!
+        usage()
+        sys.exit()
+
+    if argz.encrypt is not None: # encrypt mode, arg is the filename
+        if os.path.isfile(argz.encrypt) == False:
             print('*** Err0r!: Wrong input file')
             usage()
             sys.exit()
-        if args.output_file is None:
-            out = os.path.realpath(args.encrypt) + '.enc'
+        if argz.output_file is None:
+            out = os.path.realpath(argz.encrypt) + '.c1ph3r3d'
             print('*** No output file, using default settingz')
         else:
-            out = args.output_file
+            out = argz.output_file
         print('**********************************************************~')
-        print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(args.encrypt),out))
+        print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(argz.encrypt),out))
         print('**********************************************************~')
 
         key = wrapgetpass()
@@ -257,33 +263,33 @@ def main():
             else:
                 sys.exit()
         print('Passphrase entropy score: {0}'.format(xkcd_entropy_range(entropy)*100))
-        encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),args.encrypt,out)
+        encrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),argz.encrypt,out)
         rm = input('Remove original file ? (y/N)')
         if rm.lower() == 'y':
-            os.remove(os.path.realpath(args.encrypt))
+            os.remove(os.path.realpath(argz.encrypt))
         print('C1ph3r3d : {0} !'.format(out))
 
-
-    elif args.decrypt is not None: # decryption mode
-        if os.path.isfile(args.decrypt) == False:
+    elif argz.decrypt is not None: # decryption mode, arg is the filename
+        if os.path.isfile(argz.decrypt) == False:
             print('*** Err0r!: Wrong input file')
             usage()
             sys.exit()
 
-        if args.output_file is None:
-            out = os.path.realpath(args.decrypt).split('.')[0]
+        if argz.output_file is None:
+            out = os.path.realpath(argz.decrypt).split('.')[0]
             print('*** No output file, using default settingz')
         else:
-            out = args.output_file
+            out = argz.output_file
         # disclosure so the user know what will happen
         print('**********************************************************~')
-        print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(args.decrypt),out))
+        print('| Input file : {0}\r\n| Output file : {1}'.format(os.path.realpath(argz.decrypt),out))
         print('**********************************************************~')
         key = getpass.getpass()
 
         try:
-            decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),args.decrypt,out)
+            decrypt_file(hashlib.sha256(base64.b64encode(key.encode())).digest(),argz.decrypt,out)
             print('D3c1ph3r3d : {0} !'.format(os.path.realpath(out)))
         except struct.error as e: # happen when decrypt function can't find a valid IV
             print('*** Err0r!: Wrong input file (unencrypted ?)')
+
 main()
